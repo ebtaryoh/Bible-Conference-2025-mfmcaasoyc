@@ -10,6 +10,10 @@ import feedbackRoutes from "./src/routes/feedback.js";
 import statsRoutes from "./src/routes/stats.js";
 
 const app = express();
+const allowedOrigins = [
+  'http://localhost:5173', // local dev
+  'https://bible-conference-2025-mfmcaasoyc-xe.vercel.app' 
+];
 
 app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(express.json());
