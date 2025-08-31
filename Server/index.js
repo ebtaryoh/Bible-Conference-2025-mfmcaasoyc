@@ -11,29 +11,24 @@ import statsRoutes from "./src/routes/stats.js";
 
 const app = express();
 
-// Allowed origins for CORS
 const allowedOrigins = [
-  "http://localhost:5173", // local dev
-  "https://bible-conference-2025-mfmcaasoyc-xe.vercel.app", // frontend on Vercel
-  "https://bible-conference-2025-mfmcaasoyc.vercel.app" // backend Vercel domain
+  "http://localhost:5173",
+  "https://bible-conference-2025-mfmcaasoyc-xe.vercel.app", // frontend Vercel
 ];
 
-// CORS middleware
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin like Postman or server-to-server
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  credentials: true
+}));
+
 
 // Middleware to parse JSON
 app.use(express.json());
