@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://bible-conference-2025-mfmcaasoyc.vercel.app/api",
+  baseURL: "https://bible-conference-2025-backend.onrender.com/api",
 });
 
 // Attendees
