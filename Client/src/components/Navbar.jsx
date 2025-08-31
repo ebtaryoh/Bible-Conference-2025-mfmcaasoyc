@@ -1,55 +1,52 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-purple-800 shadow-md">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-lg py-3">
       <div className="container-fluid">
         {/* Logo */}
-        <Link to="/" className="navbar-brand text-white">
-          MFM CYCBC 2025
+        <Link to="/" className="navbar-brand fw-bold fs-4 text-light">
+          MFMCAASOYC BC 2025
         </Link>
 
         {/* Mobile Hamburger */}
         <button
-          className="navbar-toggler"
+          className="navbar-toggler border-0"
           type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded={isOpen ? "true" : "false"}
-          aria-label="Toggle navigation"
           onClick={() => setIsOpen(!isOpen)}
         >
-          <span className="navbar-toggler-icon"></span>
+          {isOpen ? (
+            <span className="text-light fs-4">✕</span>
+          ) : (
+            <span className="text-light fs-4">☰</span>
+          )}
         </button>
 
-        {/* Desktop Links */}
-        <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`} id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link to="/register" className="nav-link text-white">
-                Register
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/checkin" className="nav-link text-white">
-                Check-In
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/feedback" className="nav-link text-white">
-                Feedback
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/admin" className="nav-link text-white">
-                Admin
-              </Link>
-            </li>
+        {/* Links */}
+        <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
+          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+            {["Register", "Check-In", "Feedback", "Admin"].map((item) => (
+              <li className="nav-item" key={item}>
+                <Link
+                  to={`/${item.toLowerCase().replace(" ", "")}`}
+                  className="nav-link text-light fw-medium px-3 py-2 rounded"
+                  style={{ transition: "all 0.3s ease" }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#14532d";
+                    e.target.style.transform = "scale(1.05)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "transparent";
+                    e.target.style.transform = "scale(1)";
+                  }}
+                >
+                  {item}
+                </Link>
+              </li>
+            ))}
           </ul>
         </div>
       </div>

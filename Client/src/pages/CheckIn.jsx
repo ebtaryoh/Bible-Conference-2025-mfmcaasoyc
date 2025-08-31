@@ -8,7 +8,7 @@ function CheckIn() {
 
   const handleCheckIn = async () => {
     if (!attendeeId.trim()) {
-      setMessage({ type: "error", text: "Please enter your Registration ID." });
+      setMessage({ type: "danger", text: "Please enter your Registration ID." });
       return;
     }
 
@@ -22,7 +22,7 @@ function CheckIn() {
       setAttendeeId("");
     } catch (error) {
       setMessage({
-        type: "error",
+        type: "danger",
         text: error.response?.data?.message || "Check-in failed.",
       });
     } finally {
@@ -31,41 +31,39 @@ function CheckIn() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 to-indigo-700 px-4">
-      <div className="w-full max-w-md bg-white shadow-2xl rounded-2xl p-8">
-        <h2 className="text-3xl font-extrabold text-center text-purple-700 mb-6">
-          Attendee Check-In
-        </h2>
+    <div className="min-vh-100 d-flex align-items-center justify-content-center" 
+         style={{ background: "linear-gradient(135deg, #16a34a, #059669)" }}>
+      <div className="card shadow-lg rounded-4 p-4" style={{ maxWidth: "400px", width: "100%" }}>
+        <h2 className="text-center text-success fw-bold mb-4">Attendee Check-In</h2>
 
         {message && (
-          <div
-            className={`p-3 rounded mb-4 text-center text-sm font-medium ${
-              message.type === "success"
-                ? "bg-green-100 text-green-700"
-                : "bg-red-100 text-red-700"
-            }`}
-          >
+          <div className={`alert alert-${message.type} text-center py-2`} role="alert">
             {message.text}
           </div>
         )}
 
-        <input
-          type="text"
-          placeholder="Enter Registration ID"
-          className="w-full border-2 border-purple-300 focus:ring-2 focus:ring-purple-500 focus:outline-none p-3 rounded-lg text-gray-700 placeholder-gray-400 mb-4"
-          value={attendeeId}
-          onChange={(e) => setAttendeeId(e.target.value)}
-        />
+        <div className="mb-3">
+          <input
+            type="text"
+            className="form-control form-control-lg border-success"
+            placeholder="Enter Registration ID"
+            value={attendeeId}
+            onChange={(e) => setAttendeeId(e.target.value)}
+          />
+        </div>
 
         <button
-          onClick={handleCheckIn}
+          className="btn btn-lg w-100 btn-success shadow-sm"
           disabled={loading}
-          className="w-full bg-purple-700 hover:bg-purple-800 transition text-white py-3 rounded-lg font-semibold shadow-md disabled:opacity-60"
+          onClick={handleCheckIn}
+          style={{ transition: "all 0.3s ease" }}
+          onMouseEnter={(e) => e.target.style.transform = "scale(1.03)"}
+          onMouseLeave={(e) => e.target.style.transform = "scale(1)"}
         >
           {loading ? "Checking in..." : "Check In"}
         </button>
 
-        <p className="mt-6 text-gray-600 text-sm text-center">
+        <p className="mt-3 text-center text-muted small">
           Please show your Registration ID at the desk after check-in.
         </p>
       </div>

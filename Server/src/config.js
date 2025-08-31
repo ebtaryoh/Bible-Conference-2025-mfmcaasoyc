@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const PORT = process.env.PORT || 4000;
-export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "https://bible-conference-2025-mfmcaasoyc-xe.vercel.app/";
+export const CLIENT_ORIGIN = process.env.CLIENT_ORIGIN || "http://localhost:5173";
 export const ADMIN_API_KEY = process.env.ADMIN_API_KEY || "";
 
 export const MONGO_URI =

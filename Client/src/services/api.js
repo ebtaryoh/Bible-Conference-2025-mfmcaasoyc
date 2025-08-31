@@ -1,14 +1,13 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://bible-conference-2025-backend.onrender.com/api",
+  baseURL: "http://localhost:4000/api",
 });
 
 // Attendees
 export const registerAttendee = (data) => API.post("/attendees/register", data);
-export const checkInAttendee = (attendeeId) => API.post("/attendees/checkin", {
-  registrationId: attendeeId,  // Send the registrationId in the body
-});
+export const checkInAttendee = (attendeeId) => API.post(`/attendees/checkin/${attendeeId}`);
+
 // Feedback
 export const submitFeedback = (data) => API.post("/feedback", data);
 
