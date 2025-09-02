@@ -6,8 +6,9 @@ const API = axios.create({
 
 // Attendees
 export const registerAttendee = (data) => API.post("/attendees/register", data);
-export const checkInAttendee = (attendeeId) => API.post(`/attendees/checkin/${attendeeId}`);
 
+export const checkInAttendee = (attendeeId) =>
+  API.post("/attendees/checkin", { registrationId: attendeeId });
 // Feedback
 export const submitFeedback = (data) => API.post("/feedback", data);
 

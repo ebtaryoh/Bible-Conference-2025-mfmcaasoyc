@@ -148,7 +148,6 @@
 
 // export default router;
 
-
 // // server/src/routes/attendees.js
 // import express from "express";
 // import { Attendee } from "../models/Attendee.js";
@@ -236,8 +235,6 @@
 
 // export default router;
 
-
-
 // server/src/routes/attendees.js
 import express from "express";
 import { Attendee } from "../models/Attendee.js";
@@ -281,7 +278,8 @@ router.post("/register", async (req, res) => {
 
     // Send confirmation email if user gave email
     if (email) {
-      const subject = "Your Registration – MFMCAASO Youth Church Bible Conference 2025";
+      const subject =
+        "Your Registration – MFMCAASO Youth Church Bible Conference 2025";
       const text = `Hello ${name},
 
 Your registration is confirmed!
@@ -365,12 +363,14 @@ router.get("/:registrationId", async (req, res) => {
 router.post("/checkin", async (req, res) => {
   try {
     const { registrationId } = req.body || {};
+    console.log("👉 Received registrationId:", registrationId);
+
     if (!registrationId) {
       return res.status(400).json({ message: "registrationId is required" });
     }
 
     const attendee = await Attendee.findOne({ registrationId });
-        console.log("Database query result:", attendee);  // Log query result
+    console.log("Database query result:", attendee); // Log query result
 
     if (!attendee) {
       return res.status(404).json({ message: "Attendee not found" });
@@ -398,7 +398,9 @@ router.post("/checkin", async (req, res) => {
     });
   } catch (err) {
     console.error("Check-in error:", err);
-    res.status(500).json({ message: "Error during check-in", error: err.message || err });
+    res
+      .status(500)
+      .json({ message: "Error during check-in", error: err.message || err });
   }
 });
 
