@@ -11,7 +11,6 @@ import statsRoutes from "./src/routes/stats.js";
 
 const app = express();
 
-
 app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(express.json());
 
@@ -22,10 +21,16 @@ app.use("/api/feedback", feedbackRoutes);
 app.use("/api/stats", statsRoutes);
 
 mongoose
-  .connect(MONGO_URI)
+   .connect(process.env.MONGO_URI, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("✅ MongoDB connected");
-    app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
+    const PORT = process.env.PORT || 4000;
+    app.listen(PORT, () =>
+      console.log(`🚀 Server running at http://localhost:${PORT}`)
+    );
   })
   .catch((err) => {
     console.error("❌ MongoDB connection error:", err);
