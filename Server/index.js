@@ -14,7 +14,9 @@ const app = express();
 app.use(cors({ origin: CLIENT_ORIGIN }));
 app.use(express.json());
 
-app.get("/api/health", (req, res) => res.json({ ok: true }));
+app.get("/api/health", (_req, res) => {
+  res.json({ status: "ok", time: new Date().toISOString() });
+});
 
 app.use("/api/attendees", attendeesRoutes);
 app.use("/api/feedback", feedbackRoutes);
