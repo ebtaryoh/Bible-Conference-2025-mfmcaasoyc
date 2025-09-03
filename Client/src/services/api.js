@@ -13,4 +13,9 @@ export const checkInAttendee = (attendeeId) =>
 export const submitFeedback = (data) => API.post("/feedback", data);
 
 // Stats
-export const fetchStats = (config = {}) => API.get("/stats", config);
+export const fetchStats = () =>
+  API.get("/api/stats", {
+    headers: {
+      "x-admin-key": import.meta.env.VITE_ADMIN_API_KEY, // frontend env variable
+    },
+  });
