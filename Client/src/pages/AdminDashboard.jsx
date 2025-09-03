@@ -1,6 +1,7 @@
-import {  useState } from "react";
+import { useState } from "react";
 import { fetchStats } from "../services/api";
 import StatCard from "../components/StatCard";
+import "bootstrap/dist/css/bootstrap.min.css"; // ✅ Import Bootstrap
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -20,7 +21,7 @@ function AdminDashboard() {
       setStats(data);
       setIsAuthenticated(true);
     } catch (err) {
-      console.error(err);
+      console.error("Stats fetch error:", err);
       setError("Invalid admin code or failed to load stats.");
       setStats(null);
       setIsAuthenticated(false);
@@ -38,108 +39,122 @@ function AdminDashboard() {
     loadStats(adminKey);
   };
 
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    setAdminKey("");
+    setStats(null);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 px-4 py-8">
-      <div className="max-w-5xl mx-auto">
-        <h2 className="text-3xl font-extrabold text-purple-700 mb-6 text-center">
-          Admin Dashboard
-        </h2>
+    <div className="container py-5">
+      <h2 className="text-center fw-bold text-primary mb-4">
+        Admin Dashboard
+      </h2>
 
-        {/* Admin Code Prompt */}
-        {!isAuthenticated && (
-          <form
-            onSubmit={handleSubmit}
-            className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-6"
+      {/* Admin Code Prompt */}
+      {!isAuthenticated && (
+        <form
+          onSubmit={handleSubmit}
+          className="card shadow p-4 mx-auto"
+          style={{ maxWidth: "400px" }}
+        >
+          <label className="form-label fw-medium">Enter Admin Code</label>
+          <input
+            type="password"
+            value={adminKey}
+            onChange={(e) => setAdminKey(e.target.value)}
+            className="form-control mb-3"
+            placeholder="Enter admin code"
+          />
+          <button
+            type="submit"
+            className="btn btn-primary w-100"
+            disabled={loading}
           >
-            <label className="block mb-2 text-gray-700 font-medium">
-              Enter Admin Code
-            </label>
-            <input
-              type="password"
-              value={adminKey}
-              onChange={(e) => setAdminKey(e.target.value)}
-              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
-              placeholder="Enter admin code"
-            />
-            <button
-              type="submit"
-              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md transition"
-            >
-              Access Dashboard
+            {loading ? "Loading..." : "Access Dashboard"}
+          </button>
+          {error && (
+            <p className="mt-3 text-center text-danger fw-semibold">{error}</p>
+          )}
+        </form>
+      )}
+
+      {/* Stats Display */}
+      {isAuthenticated && stats && (
+        <div className="mt-5">
+          <div className="d-flex justify-content-between align-items-center mb-4">
+            <h4 className="fw-bold text-success">Statistics Overview</h4>
+            <button className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
+              Logout
             </button>
-            {error && (
-              <p className="mt-3 text-center text-red-600 font-medium">{error}</p>
-            )}
-          </form>
-        )}
+          </div>
 
-        {/* Loading */}
-        {loading && (
-          <p className="text-center text-gray-600 animate-pulse">
-            Loading stats...
-          </p>
-        )}
-
-        {/* Stats Display */}
-        {isAuthenticated && stats && !loading && (
-          <>
-            {/* Stats Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          {/* Stats Cards */}
+          <div className="row g-4 mb-4">
+            <div className="col-md-4">
               <StatCard
                 title="Total Attendees"
                 value={stats.totalRegistered}
-                color="bg-blue-500"
+                color="bg-primary"
               />
+            </div>
+            <div className="col-md-4">
               <StatCard
                 title="Checked In"
                 value={stats.totalCheckedIn}
-                color="bg-green-500"
+                color="bg-success"
               />
+            </div>
+            <div className="col-md-4">
               <StatCard
                 title="Feedback Received"
                 value={stats.totalFeedback}
-                color="bg-purple-500"
+                color="bg-warning"
               />
             </div>
+          </div>
 
-            {/* Registrations by Color */}
-            <div className="bg-white shadow rounded-lg p-6 mb-8">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          {/* Registrations by Color */}
+          <div className="card shadow mb-4">
+            <div className="card-body">
+              <h5 className="fw-bold text-secondary mb-3">
                 Registrations by Group Color
-              </h3>
-              <ul className="space-y-2">
+              </h5>
+              <ul className="list-group">
                 {Object.entries(stats.byColor).map(([color, count]) => (
                   <li
                     key={color}
-                    className="flex justify-between border-b pb-2 text-gray-600"
+                    className="list-group-item d-flex justify-content-between"
                   >
                     <span>{color}</span>
-                    <span className="font-semibold">{count}</span>
+                    <span className="fw-bold">{count}</span>
                   </li>
                 ))}
               </ul>
             </div>
+          </div>
 
-            {/* Registrations by Day */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-700 mb-4">
+          {/* Registrations by Day */}
+          <div className="card shadow">
+            <div className="card-body">
+              <h5 className="fw-bold text-secondary mb-3">
                 Registrations by Day
-              </h3>
-              <div className="space-y-2 max-h-60 overflow-y-auto">
+              </h5>
+              <div style={{ maxHeight: "250px", overflowY: "auto" }}>
                 {Object.entries(stats.byDay).map(([day, count]) => (
                   <div
                     key={day}
-                    className="flex justify-between border-b pb-2 text-gray-600"
+                    className="d-flex justify-content-between border-bottom py-2"
                   >
                     <span>{day}</span>
-                    <span className="font-semibold">{count}</span>
+                    <span className="fw-bold">{count}</span>
                   </div>
                 ))}
               </div>
             </div>
-          </>
-        )}
-      </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

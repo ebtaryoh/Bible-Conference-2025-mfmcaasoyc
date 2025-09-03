@@ -13,4 +13,4 @@ export const checkInAttendee = (attendeeId) =>
 export const submitFeedback = (data) => API.post("/feedback", data);
 
 // Stats
-export const fetchStats = () => API.get("/stats");
+export const fetchStats = (config = {}) => API.get("/stats", config);
