@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
-import { CLIENT_ORIGIN, MONGO_URI, PORT } from "./src/config.js";
+import { MONGO_URI } from "./src/config.js";
 
 import attendeesRoutes from "./src/routes/attendees.js";
 import feedbackRoutes from "./src/routes/feedback.js";
@@ -11,19 +11,42 @@ import statsRoutes from "./src/routes/stats.js";
 
 const app = express();
 
-app.use(cors({ origin: CLIENT_ORIGIN }));
+// ✅ Allowed origins
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://bibleconference2025mfmcyc.vercel.app", // no trailing slash
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true); // allow mobile apps / curl
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        console.warn("❌ CORS blocked request from:", origin);
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 
+// ✅ Health check
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", time: new Date().toISOString() });
 });
 
+// ✅ Routes
 app.use("/api/attendees", attendeesRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/stats", statsRoutes);
 
+// ✅ Connect MongoDB and start server
 mongoose
-   .connect(process.env.MONGO_URI, {
+  .connect(MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
