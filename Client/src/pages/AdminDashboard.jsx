@@ -18,7 +18,7 @@ function AdminDashboard() {
       const { data } = await fetchStats({
         headers: { "x-admin-key": key },
       });
-      setStats(data);
+      setStats(data || {}); // ✅ fallback to empty object
       setIsAuthenticated(true);
     } catch (err) {
       console.error("Stats fetch error:", err);
@@ -47,7 +47,15 @@ function AdminDashboard() {
 
   return (
     <div className="container py-5">
-      <h2 className="text-center fw-bold text-primary mb-4">
+      <h2
+        className="text-center fw-bold mb-4"
+        style={{
+          background: "linear-gradient(90deg, #14532d, #22c55e)",
+          WebkitBackgroundClip: "text",
+          color: "transparent",
+          animation: "pulse 2s infinite",
+        }}
+      >
         Admin Dashboard
       </h2>
 
@@ -68,7 +76,7 @@ function AdminDashboard() {
           />
           <button
             type="submit"
-            className="btn btn-primary w-100"
+            className="btn btn-success w-100"
             disabled={loading}
           >
             {loading ? "Loading..." : "Access Dashboard"}
@@ -83,8 +91,11 @@ function AdminDashboard() {
       {isAuthenticated && stats && (
         <div className="mt-5">
           <div className="d-flex justify-content-between align-items-center mb-4">
-            <h4 className="fw-bold text-success">Statistics Overview</h4>
-            <button className="btn btn-outline-danger btn-sm" onClick={handleLogout}>
+            <h4 className="fw-bold text-success">📊 Statistics Overview</h4>
+            <button
+              className="btn btn-outline-danger btn-sm"
+              onClick={handleLogout}
+            >
               Logout
             </button>
           </div>
@@ -94,67 +105,87 @@ function AdminDashboard() {
             <div className="col-md-4">
               <StatCard
                 title="Total Attendees"
-                value={stats.totalRegistered}
+                value={stats.totalRegistered || 0}
                 color="bg-primary"
               />
             </div>
             <div className="col-md-4">
               <StatCard
                 title="Checked In"
-                value={stats.totalCheckedIn}
+                value={stats.totalCheckedIn || 0}
                 color="bg-success"
               />
             </div>
             <div className="col-md-4">
               <StatCard
                 title="Feedback Received"
-                value={stats.totalFeedback}
+                value={stats.totalFeedback || 0}
                 color="bg-warning"
               />
             </div>
           </div>
 
           {/* Registrations by Color */}
-          <div className="card shadow mb-4">
+          <div className="card shadow mb-4 animate-card">
             <div className="card-body">
               <h5 className="fw-bold text-secondary mb-3">
-                Registrations by Group Color
+                🎨 Registrations by Group Color
               </h5>
               <ul className="list-group">
-                {Object.entries(stats.byColor).map(([color, count]) => (
-                  <li
-                    key={color}
-                    className="list-group-item d-flex justify-content-between"
-                  >
-                    <span>{color}</span>
-                    <span className="fw-bold">{count}</span>
-                  </li>
-                ))}
+                {stats.byColor &&
+                  Object.entries(stats.byColor).map(([color, count]) => (
+                    <li
+                      key={color}
+                      className="list-group-item d-flex justify-content-between"
+                    >
+                      <span>{color}</span>
+                      <span className="fw-bold">{count}</span>
+                    </li>
+                  ))}
               </ul>
             </div>
           </div>
 
           {/* Registrations by Day */}
-          <div className="card shadow">
+          <div className="card shadow animate-card">
             <div className="card-body">
               <h5 className="fw-bold text-secondary mb-3">
-                Registrations by Day
+                📅 Registrations by Day
               </h5>
               <div style={{ maxHeight: "250px", overflowY: "auto" }}>
-                {Object.entries(stats.byDay).map(([day, count]) => (
-                  <div
-                    key={day}
-                    className="d-flex justify-content-between border-bottom py-2"
-                  >
-                    <span>{day}</span>
-                    <span className="fw-bold">{count}</span>
-                  </div>
-                ))}
+                {stats.byDay &&
+                  Object.entries(stats.byDay).map(([day, count]) => (
+                    <div
+                      key={day}
+                      className="d-flex justify-content-between border-bottom py-2"
+                    >
+                      <span>{day}</span>
+                      <span className="fw-bold">{count}</span>
+                    </div>
+                  ))}
               </div>
             </div>
           </div>
         </div>
       )}
+
+      {/* Animations */}
+      <style>
+        {`
+          @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+          }
+          .animate-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+          }
+          .animate-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(34, 197, 94, 0.5);
+          }
+        `}
+      </style>
     </div>
   );
 }

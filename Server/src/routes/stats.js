@@ -6,11 +6,9 @@ import { ADMIN_API_KEY } from "../config.js";
 
 const router = express.Router();
 
-// simple admin auth via header
+// Simple admin auth via header
 function requireAdmin(req, res, next) {
   const key = req.header("x-admin-key");
-    console.log("Incoming key:", key);
-  console.log("Expected key:", ADMIN_API_KEY);
   if (!ADMIN_API_KEY || key !== ADMIN_API_KEY) {
     return res.status(401).json({ message: "Unauthorized" });
   }
@@ -27,6 +25,7 @@ router.get("/", requireAdmin, async (req, res) => {
     const totalCheckedIn = await Attendee.countDocuments({ checkedIn: true });
     const totalFeedback = await Feedback.countDocuments();
 
+    // Group counts by color
     const byColorAgg = await Attendee.aggregate([
       { $group: { _id: "$groupColor.name", count: { $sum: 1 } } },
       { $sort: { _id: 1 } }
@@ -34,17 +33,27 @@ router.get("/", requireAdmin, async (req, res) => {
     const byColor = {};
     byColorAgg.forEach((c) => (byColor[c._id || "Unknown"] = c.count));
 
+    // Registrations grouped by day
     const byDayAgg = await Attendee.aggregate([
-      { $group: {
+      {
+        $group: {
           _id: { $dateToString: { date: "$createdAt", format: "%Y-%m-%d" } },
           count: { $sum: 1 }
         }
       },
       { $sort: { _id: 1 } }
     ]);
-    const registrationsByDay = byDayAgg.map(d => ({ date: d._id, count: d.count }));
+    const byDay = {};
+    byDayAgg.forEach((d) => (byDay[d._id] = d.count));
 
-    res.json({ totalRegistered, totalCheckedIn, totalFeedback, byColor, registrationsByDay });
+    // ✅ Always return objects (never undefined)
+    res.json({
+      totalRegistered,
+      totalCheckedIn,
+      totalFeedback,
+      byColor: byColor || {},
+      byDay: byDay || {},
+    });
   } catch (err) {
     console.error("Stats error:", err);
     res.status(500).json({ message: "Error fetching stats" });
@@ -59,7 +68,10 @@ router.get("/attendees.csv", requireAdmin, async (req, res) => {
   try {
     const attendees = await Attendee.find().lean();
     res.setHeader("Content-Type", "text/csv");
-    res.setHeader("Content-Disposition", "attachment; filename=\"attendees.csv\"");
+    res.setHeader(
+      "Content-Disposition",
+      "attachment; filename=\"attendees.csv\""
+    );
 
     const stringifier = stringify({
       header: true,
@@ -72,13 +84,13 @@ router.get("/attendees.csv", requireAdmin, async (req, res) => {
         "groupColor",
         "checkedIn",
         "checkedInAt",
-        "createdAt"
-      ]
+        "createdAt",
+      ],
     });
 
     stringifier.pipe(res);
 
-    attendees.forEach(a => {
+    attendees.forEach((a) => {
       stringifier.write({
         name: a.name || "",
         email: a.email || "",
@@ -87,8 +99,10 @@ router.get("/attendees.csv", requireAdmin, async (req, res) => {
         registrationId: a.registrationId || "",
         groupColor: a.groupColor?.name || "",
         checkedIn: a.checkedIn ? "yes" : "no",
-        checkedInAt: a.checkedInAt ? new Date(a.checkedInAt).toISOString() : "",
-        createdAt: a.createdAt ? new Date(a.createdAt).toISOString() : ""
+        checkedInAt: a.checkedInAt
+          ? new Date(a.checkedInAt).toISOString()
+          : "",
+        createdAt: a.createdAt ? new Date(a.createdAt).toISOString() : "",
       });
     });
 
