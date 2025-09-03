@@ -10,9 +10,11 @@ function Home() {
       {/* Header Section */}
       <header className="text-center py-5 position-relative">
         <h1 className="display-4 fw-bold text-dark">
-          <div>MFMCAASO Youth CHURCH</div>
+          <div>MFMCAASO YOUTH CHURCH</div>
           <span className="text-purple">Bible Conference 2025</span>
+
         </h1>
+                    <div className="text-black fw-bold display-6 ">The Word Equals Life</div>
         <p className="mt-4 mx-auto bg-white p-4 rounded shadow-sm text-dark" style={{ maxWidth: "600px", animation: "fadeIn 1s ease-in-out" }}>
           In the beginning was the Word, and the Word was with God, and the Word was God.
           <br />
