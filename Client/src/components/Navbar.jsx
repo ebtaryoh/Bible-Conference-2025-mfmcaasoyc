@@ -4,6 +4,14 @@ import { Link } from "react-router-dom";
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
+  // ✅ Explicit mapping for routes
+  const links = [
+    { name: "Register", path: "/register" },
+    { name: "Check-In", path: "/checkin" }, // matches your CheckIn route
+    { name: "Feedback", path: "/feedback" },
+    { name: "Admin", path: "/admin" },
+  ];
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-lg py-3">
       <div className="container-fluid">
@@ -28,10 +36,10 @@ function Navbar() {
         {/* Links */}
         <div className={`collapse navbar-collapse ${isOpen ? "show" : ""}`}>
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            {["Register", "Check-In", "Feedback", "Admin"].map((item) => (
-              <li className="nav-item" key={item}>
+            {links.map((link) => (
+              <li className="nav-item" key={link.name}>
                 <Link
-                  to={`/${item.toLowerCase().replace(" ", "")}`}
+                  to={link.path}
                   className="nav-link text-light fw-medium px-3 py-2 rounded"
                   style={{ transition: "all 0.3s ease" }}
                   onMouseEnter={(e) => {
@@ -43,7 +51,7 @@ function Navbar() {
                     e.target.style.transform = "scale(1)";
                   }}
                 >
-                  {item}
+                  {link.name}
                 </Link>
               </li>
             ))}
