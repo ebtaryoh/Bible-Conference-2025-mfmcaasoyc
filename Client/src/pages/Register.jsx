@@ -1,12 +1,12 @@
+// client/src/pages/Register.jsx
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { registerAttendee } from "../services/api";
-import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaPaperPlane, FaSpinner } from "react-icons/fa";
+import { FaUser, FaEnvelope, FaPhone, FaBuilding, FaPaperPlane } from "react-icons/fa";
 
 function Register() {
   const [form, setForm] = useState({ name: "", email: "", phone: "", department: "" });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false); // 🔹 loading state
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -18,15 +18,11 @@ function Register() {
       return;
     }
 
-    setLoading(true); // 🔹 start loading
-
     try {
       await registerAttendee(form);
       navigate("/success");
     } catch (err) {
       setError("Registration failed: " + (err.message || "Try again later."));
-    } finally {
-      setLoading(false); // 🔹 stop loading
     }
   };
 
@@ -89,21 +85,11 @@ function Register() {
             />
           </div>
 
-          {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
             className="btn btn-gradient w-100 py-3 fw-bold text-white d-flex align-items-center justify-content-center gap-2"
           >
-            {loading ? (
-              <>
-                <FaSpinner className="spin" /> Submitting...
-              </>
-            ) : (
-              <>
-                <FaPaperPlane /> Submit
-              </>
-            )}
+            <FaPaperPlane /> Submit
           </button>
         </form>
       </div>
@@ -121,12 +107,6 @@ function Register() {
         .btn-gradient:hover {
           transform: translateY(-3px);
           box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-        }
-        .spin {
-          animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-          100% { transform: rotate(360deg); }
         }
       `}</style>
     </div>
