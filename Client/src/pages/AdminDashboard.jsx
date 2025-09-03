@@ -1,29 +1,42 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { fetchStats } from "../services/api";
 import StatCard from "../components/StatCard";
 
 function AdminDashboard() {
   const [stats, setStats] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [adminKey, setAdminKey] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    const loadStats = async () => {
-      try {
-        // ✅ fetchStats is a GET request, headers go in config
-        const { data } = await fetchStats({
-          headers: { "x-admin-key": import.meta.env.VITE_ADMIN_API_KEY },
-        });
-        setStats(data);
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load stats.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    loadStats();
-  }, []);
+  // function to load stats
+  const loadStats = async (key) => {
+    try {
+      setLoading(true);
+      setError("");
+      const { data } = await fetchStats({
+        headers: { "x-admin-key": key },
+      });
+      setStats(data);
+      setIsAuthenticated(true);
+    } catch (err) {
+      console.error(err);
+      setError("Invalid admin code or failed to load stats.");
+      setStats(null);
+      setIsAuthenticated(false);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!adminKey.trim()) {
+      setError("Please enter the admin code.");
+      return;
+    }
+    loadStats(adminKey);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-8">
@@ -32,17 +45,43 @@ function AdminDashboard() {
           Admin Dashboard
         </h2>
 
+        {/* Admin Code Prompt */}
+        {!isAuthenticated && (
+          <form
+            onSubmit={handleSubmit}
+            className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md mb-6"
+          >
+            <label className="block mb-2 text-gray-700 font-medium">
+              Enter Admin Code
+            </label>
+            <input
+              type="password"
+              value={adminKey}
+              onChange={(e) => setAdminKey(e.target.value)}
+              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+              placeholder="Enter admin code"
+            />
+            <button
+              type="submit"
+              className="mt-4 w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md transition"
+            >
+              Access Dashboard
+            </button>
+            {error && (
+              <p className="mt-3 text-center text-red-600 font-medium">{error}</p>
+            )}
+          </form>
+        )}
+
+        {/* Loading */}
         {loading && (
           <p className="text-center text-gray-600 animate-pulse">
             Loading stats...
           </p>
         )}
 
-        {error && (
-          <p className="text-center text-red-600 font-medium">{error}</p>
-        )}
-
-        {stats && (
+        {/* Stats Display */}
+        {isAuthenticated && stats && !loading && (
           <>
             {/* Stats Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
