@@ -34,9 +34,9 @@ function Navbar() {
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <span className="text-light fs-4">✕</span>
+            <span className="text-light fs-6">✕</span>
           ) : (
-            <span className="text-light fs-4">☰</span>
+            <span className="text-light fs-6">☰</span>
           )}
         </button>
 
