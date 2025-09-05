@@ -24,7 +24,7 @@ function Navbar() {
             height="40"
             className="me-2 rounded"
           />
-          <span className="fw-bold fs-4 text-light">MFMCAASOYC BC 2025</span>
+          <span className="fw-bold fs-5 text-light">MFMCAASOYC BC 2025</span>
         </Link>
 
         {/* Mobile Hamburger */}
@@ -34,9 +34,9 @@ function Navbar() {
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? (
-            <span className="text-light fs-6">✕</span>
+            <span className="text-light fs-4">✕</span>
           ) : (
-            <span className="text-light fs-6">☰</span>
+            <span className="text-light fs-4">☰</span>
           )}
         </button>
 
