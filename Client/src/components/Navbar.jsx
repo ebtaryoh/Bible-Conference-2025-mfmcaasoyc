@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/MFMCYC-LOGO-PNG.png"
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -17,7 +18,7 @@ function Navbar() {
         {/* Logo */}
         <Link to="/" className="navbar-brand d-flex align-items-center">
           <img
-            src="/Client/public/images/MFMCYC-LOGO-PNG.png"
+            src={logo}
             alt="Logo"
             width="40"
             height="40"
