@@ -4,10 +4,9 @@ import { Link } from "react-router-dom";
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
-  // ✅ Explicit mapping for routes
   const links = [
     { name: "Register", path: "/register" },
-    { name: "Check-In", path: "/checkin" }, // matches your CheckIn route
+    { name: "Check-In", path: "/checkin" },
     { name: "Feedback", path: "/feedback" },
     { name: "Admin", path: "/admin" },
   ];
@@ -16,8 +15,15 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-success shadow-lg py-3">
       <div className="container-fluid">
         {/* Logo */}
-        <Link to="/" className="navbar-brand fw-bold fs-4 text-light">
-          MFMCAASOYC BC 2025
+        <Link to="/" className="navbar-brand d-flex align-items-center">
+          <img
+            src="/Client/public/images/MFMCYC-LOGO-PNG.png"
+            alt="Logo"
+            width="40"
+            height="40"
+            className="me-2 rounded"
+          />
+          <span className="fw-bold fs-4 text-light">MFMCAASOYC BC 2025</span>
         </Link>
 
         {/* Mobile Hamburger */}
